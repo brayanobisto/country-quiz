@@ -6,7 +6,7 @@ function Card({ className, children }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, ease: 'easeIn' }}
       initial={{ opacity: 0 }}
-      className="w-full transform sm:w-card"
+      className="w-full sm:w-card"
     >
       <h1 className="mb-3 text-4xl font-bold text-center uppercase sm:text-left text-gray">
         Country Quiz

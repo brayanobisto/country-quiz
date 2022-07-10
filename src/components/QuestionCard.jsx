@@ -20,6 +20,7 @@ function QuestionCard() {
   }
 
   const handleAnswer = option => {
+    if (question.isAnswered) return
     if (option.isCorrect) {
       confetti({
         zIndex: -9999,

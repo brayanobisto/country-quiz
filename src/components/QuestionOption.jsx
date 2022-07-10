@@ -25,17 +25,17 @@ function QuestionOption({ className, onClick, question, option }) {
       type="button"
       className={className}
     >
-      <span className="text-2xl font-medium">{option.letter}</span>
-      {option.name}
+      <div className="flex gap-x-11">
+        <span className="text-2xl font-medium">{option.letter}</span>
+        {option.name}
+      </div>
       {question.isAnswered && option.isCorrect && (
-        <span className="ml-auto text-white material-symbols-outlined">
+        <span className="text-white material-symbols-outlined">
           check_circle
         </span>
       )}
       {question.isAnswered && option.isSelected && !option.isCorrect && (
-        <span className="ml-auto text-white material-symbols-outlined">
-          cancel
-        </span>
+        <span className="text-white material-symbols-outlined">cancel</span>
       )}
     </motion.button>
   )

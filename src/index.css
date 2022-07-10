@@ -12,9 +12,9 @@
 }
 
 .answer.correct {
-  @apply text-white bg-green-200 border-transparent hover:text-white hover:bg-green-200;
+  @apply justify-between text-white bg-green-200 border-transparent hover:text-white hover:bg-green-200;
 }
 
 .answer.incorrect {
-  @apply text-white border-transparent bg-red hover:text-white hover:bg-red;
+  @apply justify-between text-white border-transparent bg-red hover:text-white hover:bg-red;
 }
