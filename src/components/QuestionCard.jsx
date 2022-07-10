@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
+import confetti from 'canvas-confetti'
 import {
   answerQuestion,
   setGameOver,
@@ -16,6 +17,22 @@ function QuestionCard() {
   const handleNextQuestion = () => {
     if (!question.isCorrectlyAnswered) dispatch(setGameOver())
     else dispatch(setQuestion())
+  }
+
+  const handleAnswer = option => {
+    if (option.isCorrect) {
+      confetti({
+        zIndex: -9999,
+        particleCount: 500,
+        spread: 180,
+        angle: 90,
+        origin: {
+          x: 0.5,
+          y: 0.5,
+        },
+      })
+    }
+    dispatch(answerQuestion(option))
   }
 
   return (
@@ -55,7 +72,7 @@ function QuestionCard() {
           <QuestionOption
             key={index}
             className={option.className}
-            onClick={() => dispatch(answerQuestion(option))}
+            onClick={() => handleAnswer(option)}
             question={question}
             option={option}
           />
