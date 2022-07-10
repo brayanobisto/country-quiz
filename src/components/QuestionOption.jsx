@@ -6,7 +6,6 @@ function QuestionOption({ className, onClick, question, option }) {
 
   useEffect(() => {
     if (option.isSelected && !question.isCorrectlyAnswered) {
-      console.log('Entro al useEffect')
       controls.start({
         x: [null, -5, 5, 0],
         transition: {
