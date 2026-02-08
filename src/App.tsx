@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react";
 import { useCountries } from "@/hooks/use-countries";
 import { useQuizStore } from "@/store/quiz-store";
 import { QuestionCard } from "@/components/question-card";
@@ -24,11 +25,15 @@ function App() {
     return null;
   }
 
-  if (isGameOver) {
-    return <ResultsCard />;
-  }
-
-  return <QuestionCard />;
+  return (
+    <AnimatePresence mode="wait">
+      {isGameOver ? (
+        <ResultsCard key="results" />
+      ) : (
+        <QuestionCard key="question" />
+      )}
+    </AnimatePresence>
+  );
 }
 
 export default App;
