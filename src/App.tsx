@@ -13,7 +13,7 @@ function App() {
 
   if (isLoading || !countries) {
     return (
-      <div className="w-full sm:w-card">
+      <div className="flex w-full flex-1 flex-col sm:w-card sm:flex-initial">
         <Skeleton className="mb-3 h-10 w-64" />
         <Skeleton className="h-96 w-full rounded-xl" />
       </div>

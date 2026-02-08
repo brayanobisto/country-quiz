@@ -20,17 +20,17 @@ export function QuestionCard() {
 
   return (
     <motion.div
-      className="w-full sm:w-card"
+      className="flex w-full flex-1 flex-col sm:w-card sm:flex-initial"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <h1 className="text-quiz-gray mb-3 text-center text-4xl font-bold uppercase sm:text-left">
+      <h1 className="text-quiz-gray mb-3 hidden text-4xl font-bold uppercase sm:block sm:text-left">
         Country Quiz
       </h1>
 
-      <Card className="relative border-none shadow-none">
+      <Card className="relative flex-1 rounded-none border-none py-0 shadow-none sm:flex-initial sm:rounded-xl sm:py-6">
         <QuizIllustration className="absolute right-0 -top-[4.5rem] hidden sm:block" />
 
         <AnimatePresence mode="wait">

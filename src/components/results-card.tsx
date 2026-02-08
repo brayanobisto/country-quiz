@@ -10,18 +10,18 @@ export function ResultsCard() {
 
   return (
     <motion.div
-      className="w-full sm:w-card"
+      className="flex w-full flex-1 flex-col sm:w-card sm:flex-initial"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <h1 className="text-quiz-gray mb-3 text-center text-4xl font-bold uppercase sm:text-left">
+      <h1 className="text-quiz-gray mb-3 hidden text-4xl font-bold uppercase sm:block sm:text-left">
         Country Quiz
       </h1>
 
-      <Card className="border-none shadow-none">
-        <CardContent className="py-12 pb-8">
+      <Card className="flex-1 rounded-none border-none py-0 shadow-none sm:flex-initial sm:rounded-xl sm:py-6">
+        <CardContent className="flex flex-1 flex-col justify-center py-12 pb-8 sm:flex-initial">
           <div className="flex flex-col items-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
