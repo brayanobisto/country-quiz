@@ -3,10 +3,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ResultsIllustration from "@/components/results-illustration";
 import { useQuizStore } from "@/store/quiz-store";
+import { DIFFICULTY_QUESTIONS } from "@/types/quiz";
 
 export function ResultsCard() {
   const score = useQuizStore((state) => state.score);
+  const difficulty = useQuizStore((state) => state.difficulty);
+  const isWin = useQuizStore((state) => state.isWin);
   const resetQuiz = useQuizStore((state) => state.resetQuiz);
+
+  const totalQuestions = difficulty ? DIFFICULTY_QUESTIONS[difficulty] : 0;
 
   return (
     <motion.div
@@ -38,20 +43,20 @@ export function ResultsCard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
             >
-              Results
+              {isWin ? "Congratulations!" : "Results"}
             </motion.h2>
 
             <motion.p
-              className="text-quiz-blue-200 mb-20"
+              className="text-quiz-blue-200 mb-20 text-center"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.35 }}
             >
-              You got{" "}
+              {isWin ? "You completed all questions! " : "You got "}
               <span className="text-quiz-green-100 text-4xl font-bold">
                 {score}
-              </span>{" "}
-              correct answers
+              </span>
+              /{totalQuestions} correct answers
             </motion.p>
 
             <motion.div

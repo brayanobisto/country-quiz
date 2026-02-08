@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { Country } from "@/types/country";
-import type { Question } from "@/types/quiz";
+import type { Difficulty, Question } from "@/types/quiz";
+import { DIFFICULTY_QUESTIONS } from "@/types/quiz";
 import { generateQuestion } from "@/lib/quiz";
 import { queryClient } from "@/lib/query-client";
 
@@ -9,28 +10,34 @@ function getCountries(): Country[] {
 }
 
 interface QuizState {
+  difficulty: Difficulty | null;
   question: Question | null;
   selectedAnswer: string | null;
   usedCountryNames: Set<string>;
   score: number;
+  questionNumber: number;
   isGameOver: boolean;
+  isWin: boolean;
 }
 
 interface QuizActions {
-  startQuiz: () => void;
+  startQuiz: (difficulty: Difficulty) => void;
   answerQuestion: (letter: string) => void;
   continueQuiz: () => void;
   resetQuiz: () => void;
 }
 
 export const useQuizStore = create<QuizState & QuizActions>((set, get) => ({
+  difficulty: null,
   question: null,
   selectedAnswer: null,
   usedCountryNames: new Set(),
   score: 0,
+  questionNumber: 1,
   isGameOver: false,
+  isWin: false,
 
-  startQuiz: () => {
+  startQuiz: (difficulty) => {
     const countries = getCountries();
     const usedCountryNames = new Set<string>();
     const question = generateQuestion(countries, usedCountryNames);
@@ -41,11 +48,14 @@ export const useQuizStore = create<QuizState & QuizActions>((set, get) => ({
     }
 
     set({
+      difficulty,
       question,
       selectedAnswer: null,
       usedCountryNames,
       score: 0,
+      questionNumber: 1,
       isGameOver: false,
+      isWin: false,
     });
   },
 
@@ -62,8 +72,8 @@ export const useQuizStore = create<QuizState & QuizActions>((set, get) => ({
   },
 
   continueQuiz: () => {
-    const { question, selectedAnswer, usedCountryNames } = get();
-    if (!question || selectedAnswer === null) return;
+    const { question, selectedAnswer, usedCountryNames, difficulty, questionNumber } = get();
+    if (!question || selectedAnswer === null || !difficulty) return;
 
     const isCorrect =
       question.options[question.correctIndex].letter === selectedAnswer;
@@ -73,11 +83,18 @@ export const useQuizStore = create<QuizState & QuizActions>((set, get) => ({
       return;
     }
 
+    const totalQuestions = DIFFICULTY_QUESTIONS[difficulty];
+
+    if (questionNumber >= totalQuestions) {
+      set({ isGameOver: true, isWin: true });
+      return;
+    }
+
     const countries = getCountries();
     const nextQuestion = generateQuestion(countries, usedCountryNames);
 
     if (!nextQuestion) {
-      set({ isGameOver: true });
+      set({ isGameOver: true, isWin: true });
       return;
     }
 
@@ -88,10 +105,20 @@ export const useQuizStore = create<QuizState & QuizActions>((set, get) => ({
       question: nextQuestion,
       selectedAnswer: null,
       usedCountryNames,
+      questionNumber: questionNumber + 1,
     });
   },
 
   resetQuiz: () => {
-    get().startQuiz();
+    set({
+      difficulty: null,
+      question: null,
+      selectedAnswer: null,
+      usedCountryNames: new Set(),
+      score: 0,
+      questionNumber: 1,
+      isGameOver: false,
+      isWin: false,
+    });
   },
 }));

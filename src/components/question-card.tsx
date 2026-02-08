@@ -6,17 +6,21 @@ import { Button } from "@/components/ui/button";
 import { QuestionOption } from "@/components/question-option";
 import QuizIllustration from "@/components/quiz-illustration";
 import { useQuizStore } from "@/store/quiz-store";
+import { DIFFICULTY_QUESTIONS } from "@/types/quiz";
 
 export function QuestionCard() {
   const question = useQuizStore((state) => state.question);
   const selectedAnswer = useQuizStore((state) => state.selectedAnswer);
+  const questionNumber = useQuizStore((state) => state.questionNumber);
+  const difficulty = useQuizStore((state) => state.difficulty);
   const answerQuestion = useQuizStore((state) => state.answerQuestion);
   const continueQuiz = useQuizStore((state) => state.continueQuiz);
 
-  if (!question) return null;
+  if (!question || !difficulty) return null;
 
   const isAnswered = selectedAnswer !== null;
   const correctOption = question.options[question.correctIndex];
+  const totalQuestions = DIFFICULTY_QUESTIONS[difficulty];
 
   return (
     <motion.div
@@ -47,6 +51,10 @@ export function QuestionCard() {
                 "py-16": !isAnswered,
               })}
             >
+              <p className="text-quiz-blue-100/60 mb-4 text-right text-sm font-semibold">
+                {questionNumber}/{totalQuestions}
+              </p>
+
               {question.type === "capital" ? (
                 <p
                   className={cn(
