@@ -1,3 +1,4 @@
+import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -88,7 +89,12 @@ export function QuestionCard() {
                     isAnswered={isAnswered}
                     isCorrect={index === question.correctIndex}
                     isSelected={option.letter === selectedAnswer}
-                    onClick={() => answerQuestion(option.letter)}
+                    onClick={() => {
+                      answerQuestion(option.letter);
+                      if (question.options[question.correctIndex].letter === option.letter) {
+                        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
+                      }
+                    }}
                   />
                 ))}
 
