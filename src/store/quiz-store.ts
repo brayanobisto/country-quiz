@@ -2,68 +2,96 @@ import { create } from "zustand";
 import type { Country } from "@/types/country";
 import type { Question } from "@/types/quiz";
 import { generateQuestion } from "@/lib/quiz";
+import { queryClient } from "@/lib/query-client";
+
+function getCountries(): Country[] {
+  return queryClient.getQueryData<Country[]>(["countries"]) ?? [];
+}
 
 interface QuizState {
   question: Question | null;
+  selectedAnswer: string | null;
+  usedCountryNames: Set<string>;
   score: number;
   isGameOver: boolean;
 }
 
 interface QuizActions {
-  startQuiz: (countries: Country[]) => void;
+  startQuiz: () => void;
   answerQuestion: (letter: string) => void;
-  nextQuestion: (countries: Country[]) => void;
-  resetQuiz: (countries: Country[]) => void;
+  continueQuiz: () => void;
+  resetQuiz: () => void;
 }
 
-export const useQuizStore = create<QuizState & QuizActions>((set) => ({
+export const useQuizStore = create<QuizState & QuizActions>((set, get) => ({
   question: null,
+  selectedAnswer: null,
+  usedCountryNames: new Set(),
   score: 0,
   isGameOver: false,
 
-  startQuiz: (countries) => {
-    set({ question: generateQuestion(countries), score: 0, isGameOver: false });
-  },
+  startQuiz: () => {
+    const countries = getCountries();
+    const usedCountryNames = new Set<string>();
+    const question = generateQuestion(countries, usedCountryNames);
 
-  answerQuestion: (letter) => {
-    set((state) => {
-      if (!state.question || state.question.isAnswered) return state;
+    if (question) {
+      const correctCountry = question.options[question.correctIndex];
+      usedCountryNames.add(correctCountry.name);
+    }
 
-      const isCorrect = state.question.correctAnswer.letter === letter;
-
-      const options = state.question.options.map((option) => {
-        if (option.isCorrect) return { ...option, status: "correct" as const };
-        if (option.letter === letter && !isCorrect)
-          return { ...option, status: "incorrect" as const };
-        return option;
-      });
-
-      return {
-        question: {
-          ...state.question,
-          options,
-          isAnswered: true,
-          isCorrectlyAnswered: isCorrect,
-        },
-        score: isCorrect ? state.score + 1 : state.score,
-      };
-    });
-  },
-
-  nextQuestion: (countries) => {
-    set((state) => {
-      if (state.question && !state.question.isCorrectlyAnswered) {
-        return { isGameOver: true };
-      }
-      return { question: generateQuestion(countries) };
-    });
-  },
-
-  resetQuiz: (countries) => {
     set({
-      question: generateQuestion(countries),
+      question,
+      selectedAnswer: null,
+      usedCountryNames,
       score: 0,
       isGameOver: false,
     });
+  },
+
+  answerQuestion: (letter) => {
+    const { question, selectedAnswer, score } = get();
+    if (!question || selectedAnswer !== null) return;
+
+    const isCorrect = question.options[question.correctIndex].letter === letter;
+
+    set({
+      selectedAnswer: letter,
+      score: isCorrect ? score + 1 : score,
+    });
+  },
+
+  continueQuiz: () => {
+    const { question, selectedAnswer, usedCountryNames } = get();
+    if (!question || selectedAnswer === null) return;
+
+    const isCorrect =
+      question.options[question.correctIndex].letter === selectedAnswer;
+
+    if (!isCorrect) {
+      set({ isGameOver: true });
+      return;
+    }
+
+    const countries = getCountries();
+    const nextQuestion = generateQuestion(countries, usedCountryNames);
+
+    if (!nextQuestion) {
+      set({ isGameOver: true });
+      return;
+    }
+
+    const correctCountry = nextQuestion.options[nextQuestion.correctIndex];
+    usedCountryNames.add(correctCountry.name);
+
+    set({
+      question: nextQuestion,
+      selectedAnswer: null,
+      usedCountryNames,
+    });
+  },
+
+  resetQuiz: () => {
+    get().startQuiz();
   },
 }));

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useCountries } from "@/hooks/use-countries";
 import { useQuizStore } from "@/store/quiz-store";
 import { QuestionCard } from "@/components/question-card";
@@ -7,13 +6,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function App() {
   const { data: countries, isLoading } = useCountries();
-  const { isGameOver, question, startQuiz } = useQuizStore();
-
-  useEffect(() => {
-    if (countries && !question) {
-      startQuiz(countries);
-    }
-  }, [countries, question, startQuiz]);
+  const isGameOver = useQuizStore((state) => state.isGameOver);
+  const question = useQuizStore((state) => state.question);
+  const startQuiz = useQuizStore((state) => state.startQuiz);
 
   if (isLoading || !countries) {
     return (
@@ -24,11 +19,16 @@ function App() {
     );
   }
 
-  if (isGameOver) {
-    return <ResultsCard countries={countries} />;
+  if (!question && !isGameOver) {
+    startQuiz();
+    return null;
   }
 
-  return <QuestionCard countries={countries} />;
+  if (isGameOver) {
+    return <ResultsCard />;
+  }
+
+  return <QuestionCard />;
 }
 
 export default App;

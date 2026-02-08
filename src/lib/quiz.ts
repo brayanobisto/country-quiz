@@ -2,50 +2,46 @@ import type { Country } from "@/types/country";
 import type { Question, QuestionOption, QuestionType } from "@/types/quiz";
 
 const OPTION_LETTERS = ["A", "B", "C", "D"] as const;
-
-function getRandomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+const OPTIONS_COUNT = 4;
 
 function getQuestionType(): QuestionType {
   return Math.random() < 0.5 ? "capital" : "flag";
 }
 
-function getQuestionOptions(countries: Country[]): [QuestionOption[], QuestionOption] {
-  const indices = new Set<number>();
+// Partial Fisher-Yates shuffle: swaps `count` elements to the front to pick unique random items in O(count)
+function pickRandom<T>(array: T[], count: number): T[] {
+  const copy = [...array];
 
-  while (indices.size < 4) {
-    indices.add(getRandomInt(0, countries.length - 1));
+  for (let i = 0; i < count; i++) {
+    const j = i + Math.floor(Math.random() * (copy.length - i));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
   }
 
-  const correctIndex = getRandomInt(0, 3);
-  const selectedIndices = [...indices];
-
-  const options: QuestionOption[] = selectedIndices.map((countryIndex, i) => ({
-    ...countries[countryIndex],
-    letter: OPTION_LETTERS[i],
-    isCorrect: i === correctIndex,
-    status: "default",
-  }));
-
-  return [options, options[correctIndex]];
+  return copy.slice(0, count);
 }
 
-export function generateQuestion(countries: Country[]): Question {
-  const type = getQuestionType();
-  const [options, correctAnswer] = getQuestionOptions(countries);
+export function generateQuestion(
+  countries: Country[],
+  usedCountryNames: Set<string>,
+): Question | null {
+  const available = countries.filter((c) => !usedCountryNames.has(c.name));
 
+  if (available.length < OPTIONS_COUNT) return null;
+
+  const selected = pickRandom(available, OPTIONS_COUNT);
+  const correctIndex = Math.floor(Math.random() * OPTIONS_COUNT);
+  const correctCountry = selected[correctIndex];
+
+  const options: QuestionOption[] = selected.map((country, i) => ({
+    ...country,
+    letter: OPTION_LETTERS[i],
+  }));
+
+  const type = getQuestionType();
   const text =
     type === "capital"
-      ? `${correctAnswer.capital} is the capital of`
+      ? `${correctCountry.capital} is the capital of`
       : "Which country does this flag belong to?";
 
-  return {
-    type,
-    text,
-    options,
-    correctAnswer,
-    isAnswered: false,
-    isCorrectlyAnswered: true,
-  };
+  return { type, text, options, correctIndex };
 }

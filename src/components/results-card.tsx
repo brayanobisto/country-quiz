@@ -2,14 +2,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ResultsIllustration from "@/components/results-illustration";
 import { useQuizStore } from "@/store/quiz-store";
-import type { Country } from "@/types/country";
 
-interface ResultsCardProps {
-  countries: Country[];
-}
-
-export function ResultsCard({ countries }: ResultsCardProps) {
-  const { score, resetQuiz } = useQuizStore();
+export function ResultsCard() {
+  const score = useQuizStore((state) => state.score);
+  const resetQuiz = useQuizStore((state) => state.resetQuiz);
 
   return (
     <div className="w-full sm:w-card">
@@ -36,7 +32,7 @@ export function ResultsCard({ countries }: ResultsCardProps) {
 
             <Button
               variant="outline"
-              onClick={() => resetQuiz(countries)}
+              onClick={resetQuiz}
               className="text-quiz-blue-200 border-quiz-blue-200 rounded-xl border-2 px-16 py-4 text-lg font-semibold hover:bg-quiz-blue-200/10"
             >
               Try again
