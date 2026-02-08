@@ -6,31 +6,35 @@ import { Button } from "@/components/ui/button";
 import { QuestionOption } from "@/components/question-option";
 import QuizIllustration from "@/components/quiz-illustration";
 import { useQuizStore } from "@/store/quiz-store";
+import { DIFFICULTY_QUESTIONS } from "@/types/quiz";
 
 export function QuestionCard() {
   const question = useQuizStore((state) => state.question);
   const selectedAnswer = useQuizStore((state) => state.selectedAnswer);
+  const questionNumber = useQuizStore((state) => state.questionNumber);
+  const difficulty = useQuizStore((state) => state.difficulty);
   const answerQuestion = useQuizStore((state) => state.answerQuestion);
   const continueQuiz = useQuizStore((state) => state.continueQuiz);
 
-  if (!question) return null;
+  if (!question || !difficulty) return null;
 
   const isAnswered = selectedAnswer !== null;
   const correctOption = question.options[question.correctIndex];
+  const totalQuestions = DIFFICULTY_QUESTIONS[difficulty];
 
   return (
     <motion.div
-      className="w-full sm:w-card"
+      className="flex w-full flex-1 flex-col sm:w-card sm:flex-initial"
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3 }}
     >
-      <h1 className="text-quiz-gray mb-3 text-center text-4xl font-bold uppercase sm:text-left">
+      <h1 className="text-quiz-gray mb-3 hidden text-4xl font-bold uppercase sm:block sm:text-left">
         Country Quiz
       </h1>
 
-      <Card className="relative border-none shadow-none">
+      <Card className="relative flex-1 rounded-none border-none py-0 shadow-none sm:flex-initial sm:rounded-xl sm:py-6">
         <QuizIllustration className="absolute right-0 -top-[4.5rem] hidden sm:block" />
 
         <AnimatePresence mode="wait">
@@ -47,6 +51,10 @@ export function QuestionCard() {
                 "py-16": !isAnswered,
               })}
             >
+              <p className="text-quiz-blue-100/60 mb-4 text-right text-sm font-semibold">
+                {questionNumber}/{totalQuestions}
+              </p>
+
               {question.type === "capital" ? (
                 <p
                   className={cn(
