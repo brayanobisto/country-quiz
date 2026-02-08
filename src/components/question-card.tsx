@@ -79,7 +79,7 @@ export function QuestionCard() {
             {isAnswered && (
               <Button
                 onClick={continueQuiz}
-                className="bg-quiz-yellow shadow-quiz-yellow self-end rounded-xl px-8 py-3 font-bold text-white shadow-sm hover:bg-quiz-yellow/90"
+                className="h-auto bg-quiz-yellow shadow-quiz-yellow self-end rounded-xl px-8 py-3 text-base font-bold text-white shadow-sm hover:bg-quiz-yellow/90"
               >
                 Next
               </Button>

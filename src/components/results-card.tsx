@@ -33,7 +33,7 @@ export function ResultsCard() {
             <Button
               variant="outline"
               onClick={resetQuiz}
-              className="text-quiz-blue-200 border-quiz-blue-200 rounded-xl border-2 px-16 py-4 text-lg font-semibold hover:bg-quiz-blue-200/10"
+              className="h-auto text-quiz-blue-200 border-quiz-blue-200 rounded-xl border-2 px-16 py-4 text-lg font-semibold hover:bg-quiz-blue-200/10"
             >
               Try again
             </Button>
