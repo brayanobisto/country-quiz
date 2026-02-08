@@ -1,4 +1,4 @@
-function ResultCardIlustration({ className }) {
+function ResultsIllustration({ className }: { className?: string }) {
   return (
     <svg
       width="238"
@@ -499,4 +499,4 @@ function ResultCardIlustration({ className }) {
   )
 }
 
-export default ResultCardIlustration
+export default ResultsIllustration

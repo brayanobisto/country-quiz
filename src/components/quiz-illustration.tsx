@@ -1,4 +1,4 @@
-function QuestionCardIlustration({ className }) {
+function QuizIllustration({ className }: { className?: string }) {
   return (
     <svg
       height="116"
@@ -186,4 +186,4 @@ function QuestionCardIlustration({ className }) {
   )
 }
 
-export default QuestionCardIlustration
+export default QuizIllustration;
